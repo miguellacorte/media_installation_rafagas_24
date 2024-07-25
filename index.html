@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Media Outlets</title>
+    <style>
+        body {
+            display: flex;
+            flex-wrap: wrap;
+            position: relative;
+            height: 100vh;
+            overflow: hidden;
+        }
+        .iframe-container {
+            width: 50%;
+            height: 250px;
+            position: absolute;
+        }
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="iframe-container" id="iframe1">
+        <h2>Venevisión Play</h2>
+        <iframe src="https://www.venevisionplay.com/show/645aa2b938ccad00127e26b5/647f4653a7faa00012afb2b2"></iframe>
+    </div>
+
+    <div class="iframe-container" id="iframe2">
+        <h2>Televen</h2>
+        <iframe src="https://app.televen.com/player/tv?channelId=20000841&categoryId=0&channelNumber=1"></iframe>
+    </div>
+
+    <div class="iframe-container" id="iframe3">
+        <h2>Dailymotion Video</h2>
+        <div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;">
+            <iframe style="position:absolute;top:0;left:0;width:100%;height:100%;overflow:hidden;" frameborder="0" type="text/html" src="https://www.dailymotion.com/embed/video/x8rtkvs?autoplay=1" allowfullscreen title="Dailymotion Video Player" allow="autoplay; web-share"></iframe>
+        </div>
+    </div>
+
+    <div class="iframe-container" id="iframe4">
+        <h2>RT en Español</h2>
+        <div style="position: relative;padding-bottom: 56.25%; padding-top: 25px; height: 0;">
+            <iframe style="position: absolute;top: 0;left: 0;width: 100%;height: 100%;" src="https://actualidad.rt.com/live-embed" frameborder="0" allowfullscreen></iframe>
+        </div>
+    </div>
+
+    <div class="iframe-container" id="iframe5">
+        <h2>TVes</h2>
+        <iframe src="https://www.tves.gob.ve/en-vivo/" width="100%" height="100%" frameborder="0"></iframe>
+    </div>
+
+    <div class="iframe-container" id="iframe6">
+        <h2>Vale TV</h2>
+        <iframe src="https://valetv.info/senal-en-vivo-vale-tv/" width="100%" height="100%" frameborder="0"></iframe>
+    </div>
+
+    <div class="iframe-container" id="iframe7">
+        <h2>Vepaco TV</h2>
+        <iframe src="https://vepaco.tv/" width="100%" height="100%" frameborder="0"></iframe>
+    </div>
+
+    <div class="iframe-container" id="iframe8">
+        <h2>Ávila TV</h2>
+        <iframe src="https://miraflorestv.com.ve/en-vivo/avila-tv/" width="100%" height="100%" frameborder="0"></iframe>
+    </div>
+
+    <div class="iframe-container" id="iframe9">
+        <h2>Canal i</h2>
+        <iframe src="https://lorini.net/canali/" width="100%" height="100%" frameborder="0"></iframe>
+    </div>
+
+    <div class="iframe-container" id="iframe10">
+        <h2>Meridiano TV</h2>
+        <iframe src="https://meridiano.net/meridianotv" width="100%" height="100%" frameborder="0"></iframe>
+    </div>
+
+    <script>
+        const iframes = document.querySelectorAll('.iframe-container');
+        const directions = Array.from({ length: iframes.length }, () => ({
+            x: Math.random() > 0.5 ? 1 : -1,
+            y: Math.random() > 0.5 ? 1 : -1
+        }));
+
+        const speed = 2;
+
+        function moveIframes() {
+            iframes.forEach((iframe, index) => {
+                const rect = iframe.getBoundingClientRect();
+                const parentRect = iframe.parentElement.getBoundingClientRect();
+
+                if (rect.left + rect.width >= parentRect.width || rect.left <= 0) {
+                    directions[index].x *= -1;
+                }
+                if (rect.top + rect.height >= parentRect.height || rect.top <= 0) {
+                    directions[index].y *= -1;
+                }
+
+                iframe.style.transform = `translate(${directions[index].x * speed}px, ${directions[index].y * speed}px)`;
+                iframe.style.left = `${iframe.offsetLeft + directions[index].x * speed}px`;
+                iframe.style.top = `${iframe.offsetTop + directions[index].y * speed}px`;
+            });
+
+            requestAnimationFrame(moveIframes);
+        }
+
+        moveIframes();
+    </script>
+</body>
+</html>
