@@ -12,12 +12,12 @@
             height: 100vh;
             overflow: hidden;
         }
-        .iframe-container {
+        .iframe-container, .tweet-container, .youtube-container {
             width: 50%;
             height: 250px;
             position: absolute;
         }
-        iframe {
+        iframe, .twitter-tweet {
             width: 100%;
             height: 100%;
             border: 0;
@@ -26,18 +26,17 @@
 </head>
 <body>
 
+    <!-- Existing iframe containers -->
     <div class="iframe-container" id="iframe1" style="top: 0; left: 0;">
-        <iframe src="https://www.venevisionplay.com/show/645aa2b938ccad00127e26b5/647f4653a7faa00012afb2b2"></iframe>
+        <iframe src="https://dai.ly/x82ug5r"></iframe>
     </div>
 
     <div class="iframe-container" id="iframe2" style="top: 0; left: 50%;">
-        <iframe src="https://app.televen.com/player/tv?channelId=20000841&categoryId=0&channelNumber=1"></iframe>
+        <iframe src="https://dai.ly/x774s7s"></iframe>
     </div>
 
     <div class="iframe-container" id="iframe3" style="top: 250px; left: 0;">
-        <div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;">
-            <iframe style="position:absolute;top:0;left:0;width:100%;height:100%;overflow:hidden;" frameborder="0" type="text/html" src="https://www.dailymotion.com/embed/video/x8rtkvs?autoplay=1" allowfullscreen title="Dailymotion Video Player" allow="autoplay; web-share"></iframe>
-        </div>
+        <div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;"> <iframe style="width:100%;height:100%;position:absolute;left:0px;top:0px;overflow:hidden" frameborder="0" type="text/html" src="https://www.dailymotion.com/embed/video/x930kre?autoplay=1" width="100%" height="100%" allowfullscreen title="Dailymotion Video Player" allow="autoplay; web-share"> </iframe> </div>
     </div>
 
     <div class="iframe-container" id="iframe4" style="top: 250px; left: 50%;">
@@ -47,7 +46,7 @@
     </div>
 
     <div class="iframe-container" id="iframe5" style="top: 500px; left: 0;">
-        <iframe src="https://www.tves.gob.ve/en-vivo/" width="100%" height="100%" frameborder="0"></iframe>
+        <iframe src="https://www.youtube.com/embed/JzdRa09Y7aE?si=SRZlmLI3ePksLorg" width="100%" height="100%" frameborder="0"></iframe>
     </div>
 
     <div class="iframe-container" id="iframe6" style="top: 500px; left: 50%;">
@@ -70,7 +69,33 @@
         <iframe src="https://meridiano.net/meridianotv" width="100%" height="100%" frameborder="0"></iframe>
     </div>
 
+    <!-- Embed Specific Tweet as an Iframe -->
+    <div class="tweet-container" id="specific-tweet" style="top: 1250px; left: 0;">
+        <iframe src="https://x.com/LedVarela/status/1817514269627256986" width="100%" height="100%" frameborder="0"></iframe>
+    </div>
+
+    <!-- Embed YouTube Live Video as an Iframe -->
+    <div class="youtube-container" id="youtube-live" style="top: 1500px; left: 0;">
+        <iframe width="560" height="315" src="https://www.youtube.com/embed/-BE0Ut0mvTk" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+    </div>
+
     <script>
+        async function fetchTweets() {
+            const response = await fetch('http://localhost:3000/tweets');
+            const tweets = await response.json();
+            const twitterFeed = document.getElementById('twitter-feed');
+            twitterFeed.innerHTML = tweets.map(tweet => `
+                <div class="tweet">
+                    <h4>${tweet.user.name}</h4>
+                    <p>${tweet.text}</p>
+                    <small>${new Date(tweet.created_at).toLocaleString()}</small>
+                </div>
+            `).join('');
+        }
+
+        fetchTweets();
+
+        // Existing JavaScript for moving iframes
         const iframes = document.querySelectorAll('.iframe-container');
         const directions = Array.from({ length: iframes.length }, () => ({
             x: Math.random() > 0.5 ? 1 : -1,
@@ -93,8 +118,8 @@
                     directions[index].y += (Math.random() - 0.5) * 2; // randomize direction
                 }
 
-                iframe.style.left = `${iframe.offsetLeft + directions[index].x * speed}px`;
-                iframe.style.top = `${iframe.offsetTop + directions[index].y * speed}px`;
+                iframe.style.left = ${iframe.offsetLeft + directions[index].x * speed}px;
+                iframe.style.top = ${iframe.offsetTop + directions[index].y * speed}px;
             });
 
             requestAnimationFrame(moveIframes);
@@ -103,15 +128,19 @@
         function playAndUnmuteVideos() {
             iframes.forEach(iframe => {
                 const iframeDoc = iframe.querySelector('iframe').contentWindow;
-                iframeDoc.postMessage({ type: 'play' }, '*');
-                iframeDoc.postMessage({ type: 'unmute' }, '*');
+                try {
+                    iframeDoc.postMessage({ type: 'play' }, '*');
+                    iframeDoc.postMessage({ type: 'unmute' }, '*');
+                } catch (error) {
+                    console.error('Error posting message to iframe:', error);
+                }
             });
         }
 
         setTimeout(() => {
             playAndUnmuteVideos();
             moveIframes();
-        }, 2000); // Delay the start by 15 seconds
+        }, 15000); // Delay the start by 15 seconds
 
         // Listening for messages to control the iframes
         window.addEventListener('message', (event) => {
